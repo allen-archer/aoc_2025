@@ -34,6 +34,7 @@ fun isIdInvalid2(id: String): Boolean {
                 val end = (factor - 1) * gap + i
                 if (!areCharactersTheSame(id, gap, i, end)) {
                     areAllMatching = false
+                    break
                 }
             }
             if (areAllMatching) {
