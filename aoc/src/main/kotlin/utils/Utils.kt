@@ -95,6 +95,4 @@ fun writeTextToFile(fileName: String, text: String) {
 /**
  * Prints a 2d List in a nice way for debugging
  */
-fun <T> printGrid(grid: List<List<T>>) {
-    println(grid.joinToString("\n") { it.joinToString("") })
-}
+fun <T> printGrid(grid: List<List<T>>) = println(grid.joinToString("\n") { it.joinToString("") })
