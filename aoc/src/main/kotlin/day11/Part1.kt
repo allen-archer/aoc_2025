@@ -4,7 +4,6 @@ import utils.*
 
 const val end = "out"
 var map: Map<String, List<String>>? = null
-var visited: Set<String> = mutableSetOf()
 
 fun main() {
     setInputIoStartTime()
@@ -23,7 +22,7 @@ fun countPaths(vertex: String): Int {
     for (otherVertex in otherVertices) {
         if (otherVertex == end) {
             total++
-        } else if (!visited.contains(otherVertex)) {
+        } else {
             total += countPaths(otherVertex)
         }
     }
