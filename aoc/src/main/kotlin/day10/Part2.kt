@@ -8,37 +8,52 @@ val testInput = """
 [.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}
 """.trimIndent()
 
+var cache: MutableMap<Pair<List<Int>, Int>, Int> = mutableMapOf()
+
 fun main() {
     setInputIoStartTime()
-    val input = testInput
-    // val input = getInput()
+//    val input = testInput
+     val input = getInput(10)
     setInputParseStartTime()
     val machines = parseInput1(input)
     setAlgorithmStartTime()
     var total = 0
     for (machine in machines) {
-        var best = Int.MAX_VALUE
-        var joltages = machine.joltages.map { 0 }
-        val result = check(joltages, machine.joltages, best, 0, machine.buttons)
+        cache = mutableMapOf()
+        val result = check(machine.joltages.map { 0 }, machine.joltages, machine.buttons)
+        println(result)
         total += result
     }
     println(getElapsedTime())
     println(total)
 }
 
-fun check(joltages: List<Int>, targetJoltages: List<Int>, best: Int, step: Int, buttons: List<List<Int>>): Int {
-    val currentStep = step + 1
-    var nextBest = best
-    for (button in buttons) {
-        val newJoltages = pressButton(joltages, button)
-        if (isAtTarget(newJoltages, targetJoltages)) {
-            if (currentStep <= best) {
-                return currentStep
+fun check(joltages: List<Int>, targetJoltages: List<Int>, buttons: List<List<Int>>): Int {
+    var nextBest = Int.MAX_VALUE
+    for (i in buttons.indices) {
+        if (cache.contains(joltages to i)) {
+            val cachedVal = cache[joltages to i]!!
+            if (cachedVal != Int.MAX_VALUE) {
+                val nextVal = cachedVal + 1
+                if (nextVal < nextBest) {
+                    nextBest = nextVal
+                }
             }
-        } else if (!isOverTarget(newJoltages, targetJoltages)) {
-            val nextCheck = check(newJoltages, targetJoltages, nextBest, currentStep, buttons)
-            if (nextCheck < nextBest) {
-                nextBest = nextCheck
+        } else {
+            val button = buttons[i]
+            val newJoltages = pressButton(joltages, button)
+            if (isAtTarget(newJoltages, targetJoltages)) {
+                cache[joltages to i] = 0
+                nextBest = 1
+            } else if (!isOverTarget(newJoltages, targetJoltages)) {
+                var nextCheck = check(newJoltages, targetJoltages, buttons)
+                cache[joltages to i] = nextCheck
+                if (nextCheck != Int.MAX_VALUE) {
+                    nextCheck++
+                }
+                if (nextCheck < nextBest) {
+                    nextBest = nextCheck
+                }
             }
         }
     }
